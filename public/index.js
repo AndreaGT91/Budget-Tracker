@@ -1,3 +1,5 @@
+import { useIndexedDb } from "./indexedDb.js";
+
 let transactions = [];
 let myChart;
 
@@ -22,7 +24,7 @@ function populateTotal() {
 
   let totalEl = document.querySelector("#total");
   totalEl.textContent = total;
-}
+};
 
 function populateTable() {
   let tbody = document.querySelector("#tbody");
@@ -38,7 +40,7 @@ function populateTable() {
 
     tbody.appendChild(tr);
   });
-}
+};
 
 function populateChart() {
   // copy array and reverse it
@@ -76,7 +78,7 @@ function populateChart() {
         }]
     }
   });
-}
+};
 
 function sendTransaction(isAdding) {
   let nameEl = document.querySelector("#t-name");
@@ -142,7 +144,12 @@ function sendTransaction(isAdding) {
     nameEl.value = "";
     amountEl.value = "";
   });
-}
+};
+
+function saveRecord(transaction) {
+  transaction._id = Date.now();
+  useIndexedDb("budget", "budgetStore", "put", transaction);
+};
 
 document.querySelector("#add-btn").onclick = function() {
   sendTransaction(true);
