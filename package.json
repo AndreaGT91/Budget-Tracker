@@ -1,7 +1,7 @@
 {
   "name": "budget-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Budget tracking application",
   "main": "server.js",
   "engines": {
     "node": "14.3.0",
