@@ -1,19 +1,33 @@
-import { useIndexedDb } from "./indexedDb.js";
+import { checkForIndexedDb, useIndexedDb } from "./indexedDb.js";
 
 let transactions = [];
 let myChart;
 
+let gotIndexedDb = checkForIndexedDb();
+// let gotIndexedDb = window.indexedDB;
+
 fetch("/api/transaction")
-  .then(response => {
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
     // save db data on global variable
     transactions = data;
-
     populateTotal();
     populateTable();
     populateChart();
+  })
+  .catch(err => {
+    // If could not retrive from DB, get what's in IndexedDB
+    console.log("Error retrieving data: " + err);
+    if (gotIndexedDb) {
+      useIndexedDb("budget", "budgetStore", "get")
+      .then(data => {
+        // save db data on global variable
+        transactions = data;
+        populateTotal();
+        populateTable();
+        populateChart();
+      });
+    };
   });
 
 function populateTotal() {
@@ -147,8 +161,11 @@ function sendTransaction(isAdding) {
 };
 
 function saveRecord(transaction) {
-  transaction._id = Date.now();
-  useIndexedDb("budget", "budgetStore", "put", transaction);
+  if (gotIndexedDb) {
+    // IndexedDb requires a _id value; this one is temporary unti saved to database
+    transaction._id = Date.now();
+    useIndexedDb("budget", "budgetStore", "put", transaction);
+  };
 };
 
 document.querySelector("#add-btn").onclick = function() {
@@ -157,4 +174,34 @@ document.querySelector("#add-btn").onclick = function() {
 
 document.querySelector("#sub-btn").onclick = function() {
   sendTransaction(false);
+};
+
+window.ononline = function() {
+  // When returning to online status, check to see if transactions were saved in IndexedDb
+  if (gotIndexedDb) {
+    useIndexedDb("budget", "budgetStore", "get")
+    .then(data => {
+      // If transactions found, then add to database
+      if (data.length > 0) {
+        // Need to delete _id so that they'll be set correctly when written to database
+        data.forEach(item => delete item._id);
+        
+        fetch("/api/transaction/bulk", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+          }
+        })
+        .then(res => {
+          // When transaction successfully written to db, delete all from IndexedDb
+          useIndexedDb("budget", "budgetStore", "delete")
+        })
+        .catch(err => {
+          console.log("Error saving cached records to databse: " + err);
+        });
+      };
+    });
+  };
 };

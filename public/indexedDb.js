@@ -31,18 +31,20 @@ export function useIndexedDb(databaseName, storeName, method, object) {
         console.log("error");
       };
       if (method === "put") {
-        store.put(object);
-      } else if (method === "get") {
+        console.log(store.put(object));
+      } 
+      else if (method === "get") {
         const all = store.getAll();
         all.onsuccess = function() {
           resolve(all.result);
         };
-      } else if (method === "delete") {
-        store.delete(object._id);
-      }
+      } 
+      else if (method === "delete") {
+        store.clear();
+      };
       tx.oncomplete = function() {
         db.close();
       };
     };
   });
-}
+};
