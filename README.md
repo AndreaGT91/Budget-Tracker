@@ -1,6 +1,25 @@
 # Budget-Tracker
-Budget Tracker application that allows for offline access and functionality.
+Budget Tracker application that allows for offline access and functionality. Utilizes Mongoose and MongoDB, offline storage in IndexedDb.
 
+## GitHub Repository
+[github.com/AndreaGT91/Budget-Tracker](https://github.com/AndreaGT91/Budget -Tracker)
+
+## Heroku Deployment
+[guarded-coast-84767.herokuapp.com/](https://guarded-coast-84767.herokuapp.com/)
+
+## Installation 
+ `npm install` 
+
+## Usage 
+ `node server.js`   
+ [localhost:3000/](http://localhost:3000/)
+
+## Questions 
+ ![Andrea Bentley](https://avatars2.githubusercontent.com/u/58275699?v=4&s=48)  Andrea Bentley  (AndreaGT91)     
+[andrea@bentleytech.com](mailto:andrea@bentleytech.com)
+
+
+## Assignment:
 # Unit 18 PWA Homework: Online/Offline Budget Trackers
 
 Add functionality to our existing Budget Tracker application to allow for offline access and functionality.
